@@ -2,7 +2,7 @@
 
 ## Overview
 
-**BEACON** is a computational framework designed to perform Bayesian analysis on expression and gene dependency data across different cell lineages. The model integrates expression as the dependent variable and gene dependency data as the independent variable, while accounting for lineage as a confounding factor.
+**BEACON** is a computational framework designed to perform Bayesian analysis on expression and gene dependency data across different cell lineages. The model integrates expression as the dependent variable and gene dependency data as the independent variable.
 
 The framework uses **JAGS** (Just Another Gibbs Sampler) for Bayesian inference and MCMC (Markov Chain Monte Carlo) simulations to estimate parameters of interest, including the correlation between gene expression and dependency.
 
