@@ -179,7 +179,7 @@ if (reproduce.results) {
   # the gene's expression is the dependent variable
   dep.var = apply(exp.dat, 2, function(x){as.numeric(x)})
   rownames(dep.var) = gen.dat
-  # the gene's dependency is the independent variable along with the lineages as confounding variables
+  # the gene's dependency is the independent variable
   indep.var = apply(ccl.dep[,-1], 1, function(x){as.numeric(x)})
   rownames(indep.var) = gen.dep
 } else {
