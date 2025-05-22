@@ -38,7 +38,7 @@ num.top.genes = 10
 thr.FDR = .05
 
 # sam.dep = read.csv('~/Downloads/sample_info_20Q1.csv')
-sam.dep = read.csv('../../../../Huang_lab_data/DepMap_data/sample_info_22Q2.csv')
+sam.dep = read.csv('../../../../Huang_lab_data/DepMap_data/sample_info_22Q2.csv') #| sample_info.csv file @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=35020903
 table(sam.dep$primary_or_metastasis)
 if (cell.type!='All'){
   sam.dep = sam.dep[sam.dep$primary_or_metastasis==cell.type,]
@@ -59,7 +59,7 @@ for (i in seq_len(nrow(dep.dat.map))){
 
 if (data == 'Protein') {
   # data exp
-  exp.dat = openxlsx::read.xlsx('../../../../Huang_lab_data/QuantProtCCLE_Nusinow_Cell2020/mmc2.xlsx', sheet = 'Normalized Protein Expression')
+  exp.dat = openxlsx::read.xlsx('../../../../Huang_lab_data/QuantProtCCLE_Nusinow_Cell2020/mmc2.xlsx', sheet = 'Normalized Protein Expression') #| Supplementary data (Table S2: normalized protein expressions) from Nusinow et al. paper (doi.org/10.1016/j.cell.2019.12.023) @ https://www.cell.com/cms/10.1016/j.cell.2019.12.023/attachment/3709dedc-3a01-4e1d-ab4c-82597295c5d2/mmc2.xlsx 
   exp.dat = cbind(Gene_Symbol = exp.dat$Gene_Symbol, exp.dat[,-(1:50)])
   col.drp = which(colSums(regexprTab(expressions = c('^Protein', '^Description', '^Group', '^Uniprot', 'Peptides$', '^Column'), data = colnames(exp.dat))) > 0)
   exp.dat = exp.dat[,-col.drp]
@@ -89,7 +89,7 @@ if (data == 'Protein') {
   colnames(exp.dat) = gsub('\\_','\\.',gsub('\\_TenPx.*$','',colnames(exp.dat)))
 } else if (data == 'mRNA') {
   # exp.dat = read.csv('~/Downloads/CCLE_expression_20Q1.csv.gz')
-  exp.dat = read.csv('../../../../Huang_lab_data/DepMap_data/CCLE_expression_22Q2.csv.gz') #log2(TPM+1)
+  exp.dat = read.csv('../../../../Huang_lab_data/DepMap_data/CCLE_expression_22Q2.csv.gz') #log2(TPM+1) #| CCLE_expression.csv file (further gzipped) @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34989919
   cel.dat = exp.dat$X
   exp.dat = t(exp.dat)[-1,]
   gen.dat = gsub('\\.\\..*$','',rownames(exp.dat))
@@ -114,7 +114,7 @@ if (data == 'Protein') {
   # chu = DBI::dbGetQuery(con, 'q -d \'|\' \'SELECT * FROM ~/Downloads/CCLE_RNAseq_transcripts.csv WHERE gene = \"PAX5\"')
   
   tic = Sys.time()
-  exp.dat = read.csv('~/Downloads/CCLE_RNAseq_transcripts.csv')
+  exp.dat = read.csv('~/Downloads/CCLE_RNAseq_transcripts.csv') #| CCLE_RNAseq_transcripts.csv file @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34990048
   ela1 = Sys.time() - tic
   
   cel.dat = exp.dat$X
@@ -133,7 +133,7 @@ if (data == 'Protein') {
 
 # Dependency data
 # ccl.dep = read.csv('~/Downloads/Achilles_gene_effect_20Q1.csv.gz')
-ccl.dep = read.csv('../../../../Huang_lab_data/DepMap_data/CRISPR_gene_effect_22Q2.csv.gz') 
+ccl.dep = read.csv('../../../../Huang_lab_data/DepMap_data/CRISPR_gene_effect_22Q2.csv.gz') #| CRISPR_gene_effect.csv file (further gzipped) @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34990036
 #' =================CRISPR_gene_effect_22Q2 (CERES)==========================================
 #' CRISPR knockout screens published by Broad’s Achilles and Sanger’s SCORE projects.
 #' Negative scores imply "cell growth inhibition and/or death" following gene knockout. 
