@@ -9,6 +9,39 @@ options(java.parameters = "-Xmx8000m")
 library(openxlsx)
 library(rjags)
 
+# _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+#
+#   intsect
+# 
+#   intersect two sets of which at least one contains only unique elements
+#
+intsect = function(foo, bar, map.to = 2) {
+  comm = vector()
+  ifoo = vector()
+  ibar = vector()
+  for (f in seq_along(foo)) {
+    check = bar %in% foo[f]
+    if (any(check)) {
+      loc = which(check)
+      comm = c(comm, rep(foo[f], length(loc)))
+      ifoo = c(ifoo, rep(f, length(loc)))
+      ibar = c(ibar, loc)
+    }
+    
+  }
+  if (map.to == 1) {
+    s = sort(ifoo, decreasing = F, index.return = T, na.last = T)
+  } else if (map.to == 2) {
+    s = sort(ibar, decreasing = F, index.return = T, na.last = T)
+  }
+  comm = comm[s$ix]
+  ifoo = ifoo[s$ix]
+  ibar = ibar[s$ix]
+  return(list(comm, ifoo, ibar))
+}
+#
+# _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+
 n.adapt = 100
 n.update = 100
 n.iter = 500
@@ -159,13 +192,6 @@ gen.dep = gsub('\\.\\..*$','',colnames(ccl.dep)[-1])
 if (panel=='.druggable'){
   # filter for druggable genes
   dru.gen = readRDS('~/Downloads/box/drug.genes.RDS')
-  ccl.dep = ccl.dep[, which(gen.dep %in% dru.gen)]
-  gen.dep = gen.dep[which(gen.dep %in% dru.gen)]
-} else if (panel=='.HCC.drug.targets') {
-  res = as.data.frame(readxl::read_xlsx('~/Box/Huang_lab/manuscripts/COLLABORATIONS/Amaia_HCCmodels/data/Biojupies\ PMS\ mouse\ data\ cell\ lines_Sept14_KH.xlsx', sheet = 2))
-  las = which(rowSums(is.na(res)) == ncol(res))[1]-1
-  dru = res[1:las,1:3]
-  dru.gen = unique(unlist(lapply(dru$Gene, function(x){strsplit(x,split = '/')[[1]]})))
   ccl.dep = ccl.dep[, which(gen.dep %in% dru.gen)]
   gen.dep = gen.dep[which(gen.dep %in% dru.gen)]
 }  
