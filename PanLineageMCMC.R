@@ -9,6 +9,41 @@ options(java.parameters = '-Xmx8000m')
 library(openxlsx)
 library(rjags)
 
+# _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+#
+#   intsect
+# 
+#   intersect two sets of which at least one contains only unique elements
+#
+intsect = function(foo, bar, map.to = 2) {
+  comm = vector()
+  ifoo = vector()
+  ibar = vector()
+  for (f in seq_along(foo)) {
+    check = bar %in% foo[f]
+    if (any(check)) {
+      loc = which(check)
+      comm = c(comm, rep(foo[f], length(loc)))
+      ifoo = c(ifoo, rep(f, length(loc)))
+      ibar = c(ibar, loc)
+    }
+    
+  }
+  if (map.to == 1) {
+    s = sort(ifoo, decreasing = F, index.return = T, na.last = T)
+  } else if (map.to == 2) {
+    s = sort(ibar, decreasing = F, index.return = T, na.last = T)
+  }
+  comm = comm[s$ix]
+  ifoo = ifoo[s$ix]
+  ibar = ibar[s$ix]
+  return(list(comm, ifoo, ibar))
+}
+#
+# _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+
+
+
 n.adapt = 100
 n.update = 100
 n.iter = 500
@@ -25,9 +60,6 @@ data = 'mRNA'
 
 panel = ''
 # panel = '.druggable'
-# panel = 'DrugBank.Antibody'
-# panel = 'DrugBank.Oncology'
-# panel = 'DrugBank.Metabolic.Alimentary'
 
 cell.type = 'All'
 # cell.type = 'Primary'
@@ -120,19 +152,8 @@ if (panel=='.druggable'){
   dru.gen = readRDS('~/Downloads/box/drug.genes.RDS')
   ccl.dep = ccl.dep[, which(gen.dep %in% dru.gen)]
   gen.dep = gen.dep[which(gen.dep %in% dru.gen)]
-} else if (panel=='DrugBank.Antibody') {
-  dru.gen = read.csv('../../../../Huang_lab_data/GENE_LISTS/Drug_Targets_LoF/lists/fda_approved_drug_targets_antibody.tsv', header = F)[[1]]
-  ccl.dep = ccl.dep[, which(gen.dep %in% dru.gen)]
-  gen.dep = gen.dep[which(gen.dep %in% dru.gen)]
-} else if (panel=='DrugBank.Oncology') {
-  dru.gen = read.csv('../../../../Huang_lab_data/GENE_LISTS/Drug_Targets_LoF/lists/fda_approved_drug_targets_other_oncology.tsv', header = F)[[1]]
-  ccl.dep = ccl.dep[, which(gen.dep %in% dru.gen)]
-  gen.dep = gen.dep[which(gen.dep %in% dru.gen)]
-} else if (panel=='DrugBank.Metabolic.Alimentary') {
-  dru.gen = read.csv('../../../../Huang_lab_data/GENE_LISTS/Drug_Targets_LoF/lists/fda_approved_drug_targets_other_metabolic_alimentary.tsv', header = F)[[1]]
-  ccl.dep = ccl.dep[, which(gen.dep %in% dru.gen)]
-  gen.dep = gen.dep[which(gen.dep %in% dru.gen)]
 }
+                                                          
 # frame data: cell.line | tissue type
 ccl.dep.nam = setNames(data.frame(t(sapply(cel.tis.dep,       function(x) {c(strsplit(x, '\\.')[[1]][1], paste(strsplit(x, '\\.')[[1]][-1], collapse = '.'))}))), c('Cell','Tissue'))
 exp.dat.nam = setNames(data.frame(t(sapply(colnames(exp.dat), function(x) {c(strsplit(x, '\\.')[[1]][1], paste(strsplit(x, '\\.')[[1]][-1], collapse = '.'))}))), c('Cell','Tissue'))
