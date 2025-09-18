@@ -1,6 +1,18 @@
 # _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
-# Pan-lineage expression driven dependency, Bayesian estimate
-#
+# Script: PanLineageMCMC.R
+# Purpose: Pan-lineage BEACON (Bayesian correlation) to quantify GED/PED across all cell lines
+# Inputs:
+#   - DepMap sample info: DepMap_data/sample_info_22Q2.csv
+#   - mRNA: CCLE_expression_22Q2.csv.gz  OR  Protein: mmc2.xlsx (Nusinow et al.)
+#   - CRISPR dependency: DepMap_data/CRISPR_gene_effect_22Q2.csv.gz
+# Outputs:
+#   - Excel table with posterior summaries (per gene): Table.<DATA>.dependency.Bayesian.pancancer.xlsx
+# Reproducibility:
+#   - Fixed R and JAGS seeds; the posterior mean of rho is exported as column 'rho'
+# Expected runtime (8 vCPU / 16 GB RAM; n.iter=500):
+#   - ~1–2 hours for mRNA; protein may vary with filtering
+# Notes:
+#   - Increase n.iter / n.update for tighter posteriors (more runtime)
 # _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
 # ml R jags/4.3.0
 # R
@@ -8,7 +20,16 @@ rm(list = ls(all.names = TRUE))
 options(java.parameters = '-Xmx8000m')
 library(openxlsx)
 library(rjags)
-
+# _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+set.seed(1234) # fixed seed for reproducibility
+# Start run clock and capture session info later
+.run_start <- Sys.time()
+# Log capture: will be written to the output directory at the end
+.run_log <- list(
+  script = "PanLineageMCMC.R",
+  start_time = as.character(.run_start),
+  params = list()
+)
 # _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
 #
 #   intsect
@@ -39,50 +60,67 @@ intsect = function(foo, bar, map.to = 2) {
   ibar = ibar[s$ix]
   return(list(comm, ifoo, ibar))
 }
-#
 # _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
 
+# ---------------- Parameters (edit as needed) ----------------
+n.adapt  = 100   # JAGS adaptation steps (short keeps runtime low; increase for stability)
+n.update = 100   # burn-in updates before sampling (increase for stability)
+n.iter   = 500   # MCMC iterations per chain (increase -> tighter posteriors, longer runtime)
 
-
-n.adapt = 100
-n.update = 100
-n.iter = 500
-system(paste('mkdir',paste0('../out/jags.nadapt',n.adapt,'.update',n.update,'.mcmc',n.iter,'.simulation_SD_22Q2')))
-
-reproduce.results = T
-recalculate.FDR = T
-out = T
-continue.from = NULL
+reproduce.results = TRUE   # if TRUE, uses current matrices as loaded
+recalculate.FDR   = TRUE   # recompute BH FDR
+out               = TRUE   # write Excel outputs
+continue.from     = NULL   # resume (1..100 = percent chunks) or NULL
 # continue.from = 7
 
-data = 'mRNA'
-# data = 'Protein'
+data       = 'mRNA'        # 'mRNA' | 'Protein'
+panel      = ''            # e.g. '.druggable'
+cell.type  = 'All'         # 'All' | 'Primary' | 'Metastasis'
+thr.FDR    = .05
 
-panel = ''
-# panel = '.druggable'
+# Save parameters to run log
+.run_log$params <- list(n.adapt=n.adapt, n.update=n.update, n.iter=n.iter,
+                        data=data, panel=panel, cell.type=cell.type,
+                        thr.FDR=thr.FDR)
 
-cell.type = 'All'
-# cell.type = 'Primary'
-# cell.type = 'Metastasis'
+# Output directory (relative)
+dir.path <- file.path('..','out',
+  paste0('jags.nadapt', n.adapt, '.update', n.update, '.mcmc', n.iter, '.simulation_SD_22Q2'))
+if (!dir.exists(dir.path)) dir.create(dir.path, recursive = TRUE)
+
+# Helper to build output filename
+out_xlsx <- function(data, panel, continue.from=NULL) {
+  file.path(dir.path, paste0('Table.', data, '.dependency.Bayesian.pancancer', panel, continue.from, '.xlsx'))
+}
+
+# ---------------- Inputs (relative) ----------------
+depmap_info_path = file.path('..','..','..','..','Huang_lab_data','DepMap_data','sample_info_22Q2.csv') #| sample_info.csv file @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=35020903
+mrna_path        = file.path('..','..','..','..','Huang_lab_data','DepMap_data','CCLE_expression_22Q2.csv.gz')  #| CCLE_expression.csv file (further gzipped) @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34989919
+protein_xlsx     = file.path('..','..','..','..','Huang_lab_data','QuantProtCCLE_Nusinow_Cell2020','mmc2.xlsx') #| Supplementary data (Table S2: normalized protein expressions) from Nusinow et al. paper (doi.org/10.1016/j.cell.2019.12.023) @ https://www.cell.com/cms/10.1016/j.cell.2019.12.023/attachment/3709dedc-3a01-4e1d-ab4c-82597295c5d2/mmc2.xlsx 
+crispr_path      = file.path('..','..','..','..','Huang_lab_data','DepMap_data','CRISPR_gene_effect_22Q2.csv.gz') #| CRISPR_gene_effect.csv file (further gzipped) @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34990036
+# ---------------------------------------------------
 
 # sam.dep = read.csv('~/Downloads/sample_info_20Q1.csv')
-sam.dep = read.csv('../../../../Huang_lab_data/DepMap_data/sample_info_22Q2.csv') #| sample_info.csv file @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=35020903
+sam.dep = read.csv(depmap_info_path) 
+
 table(sam.dep$primary_or_metastasis)
 if (cell.type!='All'){
   sam.dep = sam.dep[sam.dep$primary_or_metastasis==cell.type,]
 }
 
+# Map DepMap IDs to CCLE names and extract tissue lineage from cell line labels
 dep.dat.map = sam.dep[,c(1,3)]
 dep.dat.map$Tissue_Type = as.character(sam.dep$CCLE_Name)
 # sam.dep$Tissue_Type = as.character(sam.dep$CCLE_Name)
 i=1
+# Derive tissue lineage label from CCLE name (strip leading ACH code)
 for (i in seq_len(nrow(dep.dat.map))){
   dep.dat.map$Tissue_Type[i] = sub('^[a-zA-Z0-9]*\\_','',dep.dat.map$Tissue_Type[i])
 }
 
 if (data == 'Protein') {
   # data exp
-  exp.dat = openxlsx::read.xlsx('../../../../Huang_lab_data/QuantProtCCLE_Nusinow_Cell2020/mmc2.xlsx', sheet = 'Normalized Protein Expression') #| Supplementary data (Table S2: normalized protein expressions) from Nusinow et al. paper (doi.org/10.1016/j.cell.2019.12.023) @ https://www.cell.com/cms/10.1016/j.cell.2019.12.023/attachment/3709dedc-3a01-4e1d-ab4c-82597295c5d2/mmc2.xlsx 
+  exp.dat = openxlsx::read.xlsx(protein_xlsx, sheet='Normalized Protein Expression') 
   exp.dat = cbind(Gene_Symbol = exp.dat$Gene_Symbol, exp.dat[,-(1:50)])
   col.drp = which(colSums(regexprTab(expressions = c('^Protein', '^Description', '^Group', '^Uniprot', 'Peptides$', '^Column'), data = colnames(exp.dat))) > 0)
   exp.dat = exp.dat[,-col.drp]
@@ -112,7 +150,7 @@ if (data == 'Protein') {
   colnames(exp.dat) = gsub('\\_','\\.',gsub('\\_TenPx.*$','',colnames(exp.dat)))
 } else if (data == 'mRNA') {
   # exp.dat = read.csv('~/Downloads/CCLE_expression_20Q1.csv.gz')
-  exp.dat = read.csv('../../../../Huang_lab_data/DepMap_data/CCLE_expression_22Q2.csv.gz') #| CCLE_expression.csv file (further gzipped) @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34989919
+  exp.dat = read.csv(mrna_path) 
   cel.dat = exp.dat$X
   exp.dat = t(exp.dat)[-1,]
   gen.dat = gsub('\\.\\..*$','',rownames(exp.dat))
@@ -129,7 +167,7 @@ if (data == 'Protein') {
 
 # Dependency data
 # ccl.dep = read.csv('~/Downloads/Achilles_gene_effect_20Q1.csv.gz')
-ccl.dep = read.csv('../../../../Huang_lab_data/DepMap_data/CRISPR_gene_effect_22Q2.csv.gz') #| CRISPR_gene_effect.csv file (further gzipped) @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34990036
+ccl.dep = read.csv(crispr_path) 
 
 map = match(ccl.dep$DepMap_ID, dep.dat.map$DepMap_ID) #***
 cel.dep = as.character((dep.dat.map$stripped_cell_line_name[map[!is.na(map)]]))
@@ -158,8 +196,7 @@ if (panel=='.druggable'){
 ccl.dep.nam = setNames(data.frame(t(sapply(cel.tis.dep,       function(x) {c(strsplit(x, '\\.')[[1]][1], paste(strsplit(x, '\\.')[[1]][-1], collapse = '.'))}))), c('Cell','Tissue'))
 exp.dat.nam = setNames(data.frame(t(sapply(colnames(exp.dat), function(x) {c(strsplit(x, '\\.')[[1]][1], paste(strsplit(x, '\\.')[[1]][-1], collapse = '.'))}))), c('Cell','Tissue'))
 
-# FILTER n.cell.lines <= 5
-# find n.cell.lines <= 5 per tissue type
+# Filter out lineages with <=5 cell lines (insufficient power for correlation model)
 ccl.dep.drp = which(ccl.dep.nam$Tissue %in% names(table(ccl.dep.nam$Tissue)[table(as.character(ccl.dep.nam$Tissue)) <= 5]))
 exp.dat.drp = which(exp.dat.nam$Tissue %in% names(table(exp.dat.nam$Tissue)[table(as.character(exp.dat.nam$Tissue)) <= 5]))
 # filter
@@ -180,6 +217,7 @@ if (length(exp.dat.drp)){
 # ALIGN CELL LINES
 #
 # _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+# Align expression and dependency matrices to the same cell line order
 ali = intsect(cel.dep, cel.dat)
 #
 cel.dep = cel.dep[ali[[2]]]
@@ -261,9 +299,10 @@ for (gene in genes.query) { #*** [1:100]
     
     rownames(res.out) = gene
     res.out$Gene = gene
-    
-    # res.out$z = res.out$Mean/res.out$`Time-series SE`
-    res.out$z = res.out$Mean/res.out$SD
+    colnames(res.out)[colnames(res.out) == 'Mean'] <- 'rho'  # rename for clarity
+
+    # res.out$z = res.out$rho/res.out$`Time-series SE`
+    res.out$z = res.out$rho/res.out$SD
     res.out$P.Value = pnorm(abs(res.out$z), mean = 0, sd = 1, lower.tail = F)  
     res.out
     
@@ -281,27 +320,46 @@ for (gene in genes.query) { #*** [1:100]
     message(per.don, '% done.')
     # WRITE TABLE
     if (out){
-      xlsx::write.xlsx(res.all, paste0('../out/jags.nadapt',n.adapt,'.update',n.update,'.mcmc',n.iter,'.simulation_SD_22Q2/Table.',data,'.dependency.Bayesian.pancancer',panel,continue.from,'.xlsx'))
+      xlsx::write.xlsx(res.all, out_xlsx(data, panel, continue.from))
     }
   } #**
   
 }
 # WRITE TABLE
 if (out){
-  xlsx::write.xlsx(res.all, paste0('../out/jags.nadapt',n.adapt,'.update',n.update,'.mcmc',n.iter,'.simulation_SD_22Q2/Table.',data,'.dependency.Bayesian.pancancer',panel,continue.from,'.xlsx'))
-}
+  xlsx::write.xlsx(res.all, out_xlsx(data, panel, continue.from))
 
-res.all$z = res.all$Mean/res.all$SD
+}
+colnames(res.all)[colnames(res.all) == 'Mean'] <- 'rho'  # rename for clarity
+                                                          
+res.all$z = res.all$rho/res.all$SD
 # res.all$P.Value = exp(-0.717*res.all$z-0.416*(res.all$z)**2)
 # res.all$P.Value = pchisq(res.all$z**2, df=1, lower=F)  
 res.all$P.Value = pnorm(abs(res.all$z), mean = 0, sd = 1, lower.tail = F)  
 if (recalculate.FDR) {
   res.all$adj.P.Val = p.adjust(res.all$P.Value, method = 'BH')
 }
-res.all = res.all[order(-log10(res.all$adj.P.Val+1e-323)*res.all$Mean, decreasing = F), ]
+res.all = res.all[order(-log10(res.all$adj.P.Val+1e-323)*res.all$rho, decreasing = F), ]
 
 # WRITE TABLE
 if (out){
-  xlsx::write.xlsx(res.all, paste0('../out/jags.nadapt',n.adapt,'.update',n.update,'.mcmc',n.iter,'.simulation_SD_22Q2/Table.',data,'.dependency.Bayesian.pancancer',panel,continue.from,'.xlsx'))
+  xlsx::write.xlsx(res.all, out_xlsx(data, panel, continue.from))
 }
+                                                          
+# _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+.run_end <- Sys.time()
+.run_log$end_time <- as.character(.run_end)
+.run_log$elapsed_mins <- round(as.numeric(difftime(.run_end, .run_start, units="mins")), 1)
+# Write session info + run log
+if (exists("dir.path")) {
+  writeLines(c(
+    paste0("Start: ", .run_log$start_time),
+    paste0("End:   ", .run_log$end_time),
+    paste0("Elapsed (min): ", .run_log$elapsed_mins),
+    "",
+    "SessionInfo():"
+  ), file.path(dir.path, "RUNLOG_pancancer.txt"))
+  sink(file.path(dir.path, "RUNLOG_pancancer.txt"), append = TRUE); print(sessionInfo()); sink()
+}
+# _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
 
