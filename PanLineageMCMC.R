@@ -30,6 +30,46 @@ set.seed(1234) # fixed seed for reproducibility
   start_time = as.character(.run_start),
   params = list()
 )
+
+# ---------------- Parameters (edit as needed) ----------------
+n.adapt  = 100   # JAGS adaptation steps (short keeps runtime low; increase for stability)
+n.update = 100   # burn-in updates before sampling (increase for stability)
+n.iter   = 500   # MCMC iterations per chain (increase -> tighter posteriors, longer runtime)
+
+reproduce.results = TRUE   # if TRUE, uses current matrices as loaded
+recalculate.FDR   = TRUE   # recompute BH FDR
+out               = TRUE   # write Excel outputs
+continue.from     = NULL   # resume (1..100 = percent chunks) or NULL
+# continue.from = 7
+
+data       = 'mRNA'        # 'mRNA' | 'Protein'
+panel      = ''            # e.g. '.druggable'
+cell.type  = 'All'         # 'All' | 'Primary' | 'Metastasis'
+thr.FDR    = .05
+# -------------------------------------------------------------
+
+# Save parameters to run log
+.run_log$params <- list(n.adapt=n.adapt, n.update=n.update, n.iter=n.iter,
+                        data=data, panel=panel, cell.type=cell.type,
+                        thr.FDR=thr.FDR)
+
+# Output directory (relative)
+dir.path <- file.path('..','out',
+  paste0('jags.nadapt', n.adapt, '.update', n.update, '.mcmc', n.iter, '.simulation_SD_22Q2'))
+if (!dir.exists(dir.path)) dir.create(dir.path, recursive = TRUE)
+
+# Helper to build output filename
+out_xlsx <- function(data, panel, continue.from=NULL) {
+  file.path(dir.path, paste0('Table.', data, '.dependency.Bayesian.pancancer', panel, continue.from, '.xlsx'))
+}
+
+# ---------------- Inputs (relative) ----------------
+depmap_info_path = file.path('..','..','..','..','Huang_lab_data','DepMap_data','sample_info_22Q2.csv') #| sample_info.csv file @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=35020903
+mrna_path        = file.path('..','..','..','..','Huang_lab_data','DepMap_data','CCLE_expression_22Q2.csv.gz')  #| CCLE_expression.csv file (further gzipped) @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34989919
+protein_xlsx     = file.path('..','..','..','..','Huang_lab_data','QuantProtCCLE_Nusinow_Cell2020','mmc2.xlsx') #| Supplementary data (Table S2: normalized protein expressions) from Nusinow et al. paper (doi.org/10.1016/j.cell.2019.12.023) @ https://www.cell.com/cms/10.1016/j.cell.2019.12.023/attachment/3709dedc-3a01-4e1d-ab4c-82597295c5d2/mmc2.xlsx 
+crispr_path      = file.path('..','..','..','..','Huang_lab_data','DepMap_data','CRISPR_gene_effect_22Q2.csv.gz') #| CRISPR_gene_effect.csv file (further gzipped) @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34990036
+# ---------------------------------------------------
+
 # _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
 #
 #   intsect
@@ -62,43 +102,11 @@ intsect = function(foo, bar, map.to = 2) {
 }
 # _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
 
-# ---------------- Parameters (edit as needed) ----------------
-n.adapt  = 100   # JAGS adaptation steps (short keeps runtime low; increase for stability)
-n.update = 100   # burn-in updates before sampling (increase for stability)
-n.iter   = 500   # MCMC iterations per chain (increase -> tighter posteriors, longer runtime)
-
-reproduce.results = TRUE   # if TRUE, uses current matrices as loaded
-recalculate.FDR   = TRUE   # recompute BH FDR
-out               = TRUE   # write Excel outputs
-continue.from     = NULL   # resume (1..100 = percent chunks) or NULL
-# continue.from = 7
-
-data       = 'mRNA'        # 'mRNA' | 'Protein'
-panel      = ''            # e.g. '.druggable'
-cell.type  = 'All'         # 'All' | 'Primary' | 'Metastasis'
-thr.FDR    = .05
-
-# Save parameters to run log
-.run_log$params <- list(n.adapt=n.adapt, n.update=n.update, n.iter=n.iter,
-                        data=data, panel=panel, cell.type=cell.type,
-                        thr.FDR=thr.FDR)
-
-# Output directory (relative)
-dir.path <- file.path('..','out',
-  paste0('jags.nadapt', n.adapt, '.update', n.update, '.mcmc', n.iter, '.simulation_SD_22Q2'))
-if (!dir.exists(dir.path)) dir.create(dir.path, recursive = TRUE)
-
-# Helper to build output filename
-out_xlsx <- function(data, panel, continue.from=NULL) {
-  file.path(dir.path, paste0('Table.', data, '.dependency.Bayesian.pancancer', panel, continue.from, '.xlsx'))
-}
-
-# ---------------- Inputs (relative) ----------------
-depmap_info_path = file.path('..','..','..','..','Huang_lab_data','DepMap_data','sample_info_22Q2.csv') #| sample_info.csv file @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=35020903
-mrna_path        = file.path('..','..','..','..','Huang_lab_data','DepMap_data','CCLE_expression_22Q2.csv.gz')  #| CCLE_expression.csv file (further gzipped) @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34989919
-protein_xlsx     = file.path('..','..','..','..','Huang_lab_data','QuantProtCCLE_Nusinow_Cell2020','mmc2.xlsx') #| Supplementary data (Table S2: normalized protein expressions) from Nusinow et al. paper (doi.org/10.1016/j.cell.2019.12.023) @ https://www.cell.com/cms/10.1016/j.cell.2019.12.023/attachment/3709dedc-3a01-4e1d-ab4c-82597295c5d2/mmc2.xlsx 
-crispr_path      = file.path('..','..','..','..','Huang_lab_data','DepMap_data','CRISPR_gene_effect_22Q2.csv.gz') #| CRISPR_gene_effect.csv file (further gzipped) @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34990036
-# ---------------------------------------------------
+# _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+#
+# LOAD DATA
+#
+# _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
 
 # sam.dep = read.csv('~/Downloads/sample_info_20Q1.csv')
 sam.dep = read.csv(depmap_info_path) 
