@@ -6,6 +6,11 @@
 
 The framework uses **JAGS** (Just Another Gibbs Sampler) for Bayesian inference and MCMC (Markov Chain Monte Carlo) simulations to estimate parameters of interest, including the correlation between gene expression and dependency.
 
+## Citation
+
+Elmas A, Layden HM, Ellis JD, Bartlett LN, Zhao X, Kawabata-Iwakawa R, Obinata H, Hiebert SW, Huang KL. Expression-Driven Genetic Dependency Reveals Targets for Precision Medicine. bioRxiv [Preprint]. 2024 Oct 21:2024.10.17.618926. doi: 10.1101/2024.10.17.618926. PMID: 39484404; PMCID: PMC11527036.
+[![DOI](https://zenodo.org/badge/DOI/10.1038/s42003-021-02636-7.svg)](https://doi.org/10.1101/2024.10.17.618926)
+
 ## Features
 
 - **Flexible Data Input:** Supports multiple data types such as mRNA, Protein, and RNA transcripts.
