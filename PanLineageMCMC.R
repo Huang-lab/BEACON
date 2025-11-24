@@ -39,7 +39,7 @@ set.seed(1234) # fixed seed for reproducibility
 # ---------------- Parameters (edit as needed) ----------------
 n.adapt  = 100   # JAGS adaptation steps (short keeps runtime low; increase for stability)
 n.update = 100   # burn-in updates before sampling (increase for stability)
-n.iter   = 500   # MCMC iterations per chain (increase -> tighter posteriors, longer runtime)
+n.iter   = 1000   # MCMC iterations per chain (increase -> tighter posteriors, longer runtime)
 
 reproduce.results = TRUE   # if TRUE, uses current matrices as loaded
 recalculate.FDR   = TRUE   # recompute BH FDR
@@ -305,15 +305,14 @@ for (gene in genes.query) { #*** [1:100]
     # Create initialization list with RNG specifications for each chain
     ini.lis_with_seeds <- list(
       list(.RNG.name = "base::Mersenne-Twister", .RNG.seed = 1),
-      list(.RNG.name = "base::Mersenne-Twister", .RNG.seed = 2),
-      list(.RNG.name = "base::Mersenne-Twister", .RNG.seed = 3)
+      list(.RNG.name = "base::Mersenne-Twister", .RNG.seed = 2)
     )
     # Merge with your existing initial values
     ini.lis_with_seeds <- lapply(seq_along(ini.lis_with_seeds), function(i) {
       c(ini.lis[[i]], ini.lis_with_seeds[[i]])
     })
         
-    jag.mod = jags.model(textConnection(model_string), data = dat.lis, inits = ini.lis_with_seeds, n.adapt = n.adapt, n.chains = 3, quiet = T)
+    jag.mod = jags.model(textConnection(model_string), data = dat.lis, inits = ini.lis_with_seeds, n.adapt = n.adapt, n.chains = 2, quiet = T)
     update(jag.mod, n.update, progress.bar = 'none')
     mcm.sam = coda.samples(jag.mod, c('mu', 'rho', 'sigma', 'x_rand'), n.iter = n.iter)
     
