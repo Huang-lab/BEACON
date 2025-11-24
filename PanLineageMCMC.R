@@ -301,8 +301,19 @@ for (gene in genes.query) { #*** [1:100]
     
     dat.lis = list(x = x, n = nrow(x))
     ini.lis = list(mu = colMeans(x, na.rm=T), rho = rho.pri, sigma = apply(x, 2, function(x){sd(x, na.rm = T)}))
-    
-    jag.mod = jags.model(textConnection(model_string), data = dat.lis, inits = ini.lis, n.adapt = n.adapt, n.chains = 3, quiet = T)
+
+    # Create initialization list with RNG specifications for each chain
+    ini.lis_with_seeds <- list(
+      list(.RNG.name = "base::Mersenne-Twister", .RNG.seed = 1),
+      list(.RNG.name = "base::Mersenne-Twister", .RNG.seed = 2),
+      list(.RNG.name = "base::Mersenne-Twister", .RNG.seed = 3)
+    )
+    # Merge with your existing initial values
+    ini.lis_with_seeds <- lapply(seq_along(ini.lis_with_seeds), function(i) {
+      c(ini.lis[[i]], ini.lis_with_seeds[[i]])
+    })
+        
+    jag.mod = jags.model(textConnection(model_string), data = dat.lis, inits = ini.lis_with_seeds, n.adapt = n.adapt, n.chains = 3, quiet = T)
     update(jag.mod, n.update, progress.bar = 'none')
     mcm.sam = coda.samples(jag.mod, c('mu', 'rho', 'sigma', 'x_rand'), n.iter = n.iter)
     
