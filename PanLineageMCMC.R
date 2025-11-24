@@ -66,7 +66,7 @@ out_xlsx <- function(data, panel, continue.from=NULL) {
 # ---------------- Inputs (relative) ----------------
 depmap_info_path = file.path('..','..','..','..','Huang_lab_data','DepMap_data','sample_info_22Q2.csv') #| sample_info.csv file @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=35020903
 mrna_path        = file.path('..','..','..','..','Huang_lab_data','DepMap_data','CCLE_expression_22Q2.csv.gz')  #| CCLE_expression.csv file (further gzipped) @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34989919
-protein_xlsx     = file.path('..','..','..','..','Huang_lab_data','QuantProtCCLE_Nusinow_Cell2020','mmc2.xlsx') #| Supplementary data (Table S2: normalized protein expressions) from Nusinow et al. paper (doi.org/10.1016/j.cell.2019.12.023) @ https://www.cell.com/cms/10.1016/j.cell.2019.12.023/attachment/3709dedc-3a01-4e1d-ab4c-82597295c5d2/mmc2.xlsx 
+protein_xlsx     = file.path('..','..','..','..','Huang_lab_data','QuantProtCCLE_Nusinow_Cell2020','mmc2.xlsx') #| Supplementary data (Table S2: normalized protein expressions) from Nusinow et al. paper (doi.org/10.1016/j.cell.2019.12.023) @ https://www.cell.com/cms/10.1016/j.cell.2019.12.023/attachment/3709dedc-3a01-4e1d-ab4c-82597295c5d2 
 crispr_path      = file.path('..','..','..','..','Huang_lab_data','DepMap_data','CRISPR_gene_effect_22Q2.csv.gz') #| CRISPR_gene_effect.csv file (further gzipped) @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34990036
 # ---------------------------------------------------
 
