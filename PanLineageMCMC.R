@@ -9,6 +9,11 @@
 #   - Excel table with posterior summaries (per gene): Table.<DATA>.dependency.Bayesian.pancancer.xlsx
 # Reproducibility:
 #   - Fixed R and JAGS seeds; the posterior mean of rho is exported as column 'rho'
+# Download links:
+#   - sample_info.csv file @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=35020903
+#   - CCLE_expression.csv file (further gzipped) @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34989919
+#   - Supplementary data (Table S2: normalized protein expressions) from Nusinow et al. paper (doi.org/10.1016/j.cell.2019.12.023) @ https://www.cell.com/cms/10.1016/j.cell.2019.12.023/attachment/3709dedc-3a01-4e1d-ab4c-82597295c5d2 
+#   - CRISPR_gene_effect.csv file (further gzipped) @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34990036
 # Expected runtime (8 vCPU / 16 GB RAM; n.iter=500):
 #   - ~1–2 hours for mRNA; protein may vary with filtering
 # Notes:
