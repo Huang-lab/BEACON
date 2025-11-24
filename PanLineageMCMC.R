@@ -37,8 +37,8 @@ set.seed(1234) # fixed seed for reproducibility
 )
 
 # ---------------- Parameters (edit as needed) ----------------
-n.adapt  = 100   # JAGS adaptation steps (short keeps runtime low; increase for stability)
-n.update = 100   # burn-in updates before sampling (increase for stability)
+n.adapt  = 200   # JAGS adaptation steps (short keeps runtime low; increase for stability)
+n.update = 200   # burn-in updates before sampling (increase for stability)
 n.iter   = 1000   # MCMC iterations per chain (increase -> tighter posteriors, longer runtime)
 
 reproduce.results = TRUE   # if TRUE, uses current matrices as loaded
