@@ -343,7 +343,6 @@ if (out){
   xlsx::write.xlsx(res.all, out_xlsx(data, panel, continue.from))
 
 }
-colnames(res.all)[colnames(res.all) == 'Mean'] <- 'rho'  # rename for clarity
                                                           
 res.all$z = res.all$rho/res.all$SD
 # res.all$P.Value = exp(-0.717*res.all$z-0.416*(res.all$z)**2)
