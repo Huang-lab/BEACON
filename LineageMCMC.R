@@ -27,8 +27,8 @@ library(rjags)
 set.seed(12345)  # fixed R seed
 
 # ---------------- Parameters ----------------
-n.adapt  = 100   # JAGS adaptation steps
-n.update = 100   # burn-in before sampling
+n.adapt  = 200   # JAGS adaptation steps
+n.update = 200   # burn-in before sampling
 n.iter   = 1000   # MCMC iterations per chain
 
 reproduce.results = TRUE
