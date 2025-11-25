@@ -35,7 +35,7 @@ To run the analysis, modify the R scriptS according to your data and parameters.
 
 1. **Data Preparation:**
    - Load mRNA/protein expression and CRISPR dependency data.
-   - Gzip the expression and the dependency data.
+   - Compress the expression and the dependency data (gzip CCLE_expression.csv | gzip CRISPR_gene_effect.csv).
    - Map and filter data based on lineage and gene selection.
    
 2. **Model Initialization:**
