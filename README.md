@@ -46,7 +46,7 @@ Elmas A, Layden HM, Ellis JD, Bartlett LN, Zhao X, Kawabata-Iwakawa R, Obinata H
    │   └── CRISPR_gene_effect_22Q2.csv.gz
    ├── QuantProtCCLE_Nusinow_Cell2020/
    │   ├── mmc2.xlsx
-   └── out/...
+   └── out/
 
 ## Usage
 
