@@ -50,6 +50,13 @@ Elmas A, Layden HM, Ellis JD, Bartlett LN, Zhao X, Kawabata-Iwakawa R, Obinata H
    └── out/
    ```
 
+## Computational Requirements
+
+**Runtime:** Approximately 20 hours on a 16-core processor with 128 GB memory. Actual runtime may vary depending on system specifications and the number of genes analyzed. For subset analyses or testing, consider running on a limited set of genes initially.
+
+**System Requirements:**
+- R version 4.5.1 or later
+- See `requirements.txt` for complete package versions and dependencies
 
 ## Usage
 
