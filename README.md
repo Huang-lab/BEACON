@@ -41,11 +41,11 @@ Elmas A, Layden HM, Ellis JD, Bartlett LN, Zhao X, Kawabata-Iwakawa R, Obinata H
    |-- LineageMCMC.R  
    |-- PanLineageMCMC.R  
    |-- DepMap_data/  
-   |   |-- sample_info_22Q2.csv  
-   |   |-- CCLE_expression_22Q2.csv.gz  
-   |   |-- CRISPR_gene_effect_22Q2.csv.gz  
+   |&emsp;|-- sample_info_22Q2.csv  
+   |&emsp;|-- CCLE_expression_22Q2.csv.gz  
+   |&emsp;|-- CRISPR_gene_effect_22Q2.csv.gz  
    |-- QuantProtCCLE_Nusinow_Cell2020/  
-   |   |-- mmc2.xlsx  
+   |&emsp;|-- mmc2.xlsx  
    |-- out/  
 
 ## Usage
