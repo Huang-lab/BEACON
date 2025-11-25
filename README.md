@@ -29,6 +29,25 @@ Elmas A, Layden HM, Ellis JD, Bartlett LN, Zhao X, Kawabata-Iwakawa R, Obinata H
 3. Install JAGS:
    - JAGS can be downloaded and installed from [JAGS official site](https://sourceforge.net/projects/mcmc-jags/).
 
+4. Download required files and setup folders:
+
+   - sample_info.csv     @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=35020903
+   - CCLE_expression.csv (further gzipped)     @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34989919
+   - Supplementary data (Table S2: normalized protein expressions) from Nusinow et al. paper (doi.org/10.1016/j.cell.2019.12.023)     @ https://www.cell.com/cms/10.1016/j.cell.2019.12.023/attachment/3709dedc-3a01-4e1d-ab4c-82597295c5d2
+   - CRISPR_gene_effect.csv (further gzipped)     @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34990036
+
+   Folder structure:
+   BEACON-main/
+   ├── LineageMCMC.R
+   ├── PanLineageMCMC.R
+   ├── DepMap_data/
+   │   ├── sample_info_22Q2.csv
+   │   ├── CCLE_expression_22Q2.csv.gz
+   │   └── CRISPR_gene_effect_22Q2.csv.gz
+   ├── QuantProtCCLE_Nusinow_Cell2020/
+   │   ├── mmc2.xlsx
+   └── out/...
+
 ## Usage
 
 To run the analysis, modify the R scriptS according to your data and parameters. The primary script performs the following steps:
