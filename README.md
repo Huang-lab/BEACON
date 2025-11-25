@@ -38,15 +38,15 @@ Elmas A, Layden HM, Ellis JD, Bartlett LN, Zhao X, Kawabata-Iwakawa R, Obinata H
 
    Folder structure:
    BEACON-main/
-   ├── LineageMCMC.R
-   ├── PanLineageMCMC.R
-   ├── DepMap_data/
-   │   ├── sample_info_22Q2.csv
-   │   ├── CCLE_expression_22Q2.csv.gz
-   │   └── CRISPR_gene_effect_22Q2.csv.gz
-   ├── QuantProtCCLE_Nusinow_Cell2020/
-   │   ├── mmc2.xlsx
-   └── out/
+   |-- LineageMCMC.R
+   |-- PanLineageMCMC.R
+   |-- DepMap_data/
+   |   |-- sample_info_22Q2.csv
+   |   |-- CCLE_expression_22Q2.csv.gz
+   |   |-- CRISPR_gene_effect_22Q2.csv.gz
+   |-- QuantProtCCLE_Nusinow_Cell2020/
+   |   |-- mmc2.xlsx
+   |-- out/
 
 ## Usage
 
