@@ -37,26 +37,18 @@ Elmas A, Layden HM, Ellis JD, Bartlett LN, Zhao X, Kawabata-Iwakawa R, Obinata H
    - CRISPR_gene_effect.csv (further gzipped)     @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34990036
 
    - Folder structure:  
-   BEACON-main/  
-   |-- LineageMCMC.R  
-   |-- PanLineageMCMC.R  
-   |-- DepMap_data/  
-   |&emsp;|-- sample_info_22Q2.csv  
-   |&emsp;|-- CCLE_expression_22Q2.csv.gz  
-   |&emsp;|-- CRISPR_gene_effect_22Q2.csv.gz  
-   |-- QuantProtCCLE_Nusinow_Cell2020/  
-   |&emsp;|-- mmc2.xlsx  
-   |-- out/  
-
-```
-BEACON-main/
-├── LineageMCMC.R
-├── DepMap_data/
-│   ├── sample_info.csv
-│   ├── CCLE_expression.csv.gz
-│   └── CRISPR_gene_effect.csv.gz
-└── results/
-```
+   ```
+   BEACON-main/
+   ├── LineageMCMC.R
+   ├── PanLineageMCMC.R
+   ├── DepMap_data/
+   │   ├── sample_info_22Q2.csv  
+   │   ├── CCLE_expression_22Q2.csv.gz
+   │   └── CRISPR_gene_effect_22Q2.csv.gz
+   ├── QuantProtCCLE_Nusinow_Cell2020/  
+   │   └── mmc2.xlsx  
+   └── out/
+   ```
 
 
 ## Usage
