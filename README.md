@@ -48,6 +48,17 @@ Elmas A, Layden HM, Ellis JD, Bartlett LN, Zhao X, Kawabata-Iwakawa R, Obinata H
    |&emsp;|-- mmc2.xlsx  
    |-- out/  
 
+```
+BEACON-main/
+├── LineageMCMC.R
+├── DepMap_data/
+│   ├── sample_info.csv
+│   ├── CCLE_expression.csv.gz
+│   └── CRISPR_gene_effect.csv.gz
+└── results/
+```
+
+
 ## Usage
 
 To run the analysis, modify the R scriptS according to your data and parameters. The primary script performs the following steps:
