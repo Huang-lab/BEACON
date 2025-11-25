@@ -34,7 +34,8 @@ Elmas A, Layden HM, Ellis JD, Bartlett LN, Zhao X, Kawabata-Iwakawa R, Obinata H
 To run the analysis, modify the R scriptS according to your data and parameters. The primary script performs the following steps:
 
 1. **Data Preparation:**
-   - Load mRNA, Protein, or RNA transcript data.
+   - Load mRNA/protein expression and CRISPR dependency data.
+   - Gzip the expression and the dependency data.
    - Map and filter data based on lineage and gene selection.
    
 2. **Model Initialization:**
