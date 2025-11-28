@@ -321,7 +321,6 @@ for (lineage in sort(unique(as.character(ccl.dep.nam$Tissue)))) {#***
               c(ini.lis,
                 list(.RNG.name = "base::Mersenne-Twister",
                      .RNG.seed = 1)),
-              
               c(ini.lis,
                 list(.RNG.name = "base::Mersenne-Twister",
                      .RNG.seed = 2))
