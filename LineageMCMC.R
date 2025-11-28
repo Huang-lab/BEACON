@@ -3,7 +3,7 @@
 # Purpose: Per-lineage BEACON (Bayesian correlation) to quantify GED/PED within lineages
 # Inputs:
 #   - DepMap sample info: DepMap_data/sample_info_22Q2.csv
-#   - mRNA: CCLE_expression_22Q2.csv.gz | Protein: mmc2.xlsx | RNAtranscript: CCLE_RNAseq_transcripts.csv
+#   - mRNA: CCLE_expression_22Q2.csv.gz | Protein: mmc2.xlsx
 #   - CRISPR dependency: DepMap_data/CRISPR_gene_effect_22Q2.csv.gz
 # Outputs:
 #   - One Excel per lineage: Table.<DATA>.dependency.Bayesian.lineage.<LINEAGE>.xlsx
@@ -35,7 +35,7 @@ recalculate.FDR   = TRUE
 out               = TRUE
 continue.from     = NULL   # e.g. resume index; usually NULL
 
-data      = 'mRNA'         # 'mRNA' | 'Protein' | 'RNAtranscript'
+data      = 'mRNA'         # 'mRNA' | 'Protein'
 panel     = ''             # e.g. '.druggable', 'DrugBank.Antibody', etc.
 cell.type = 'All'          # 'All' | 'Primary' | 'Metastasis'
 
@@ -171,33 +171,6 @@ if (data == 'Protein') {
   exp.dat = t(exp.dat)[-1,]
   gen.dat = gsub('\\.\\..*$','',rownames(exp.dat))
   gen.dat.original = gen.dat
-  colnames(exp.dat) = as.character(gsub('\\_','\\.',apply(dep.dat.map[match(cel.dat, dep.dat.map$DepMap_ID),-1], 1, function(x) paste(x, collapse = '.'))))
-  cel.dat = apply(as.matrix(colnames(exp.dat)), 1, function(x) {strsplit(x, split = '\\.')[[1]][1]})
-  # fix the ACH code not mapping to cell lines: discard
-  idrop = which(cel.dat=='NA')
-  if (length(idrop)>0){
-    cel.dat = cel.dat[-idrop]
-    exp.dat = exp.dat[,-idrop]
-  }
-} else if (data == 'RNAtranscript') {
-  
-  # x = readLines(file("~/Downloads/CCLE_RNAseq_transcripts.csv","r"), n=10)
-  # 
-  # library("ff")
-  # x <- read.csv.ffdf(file="~/Downloads/CCLE_RNAseq_transcripts.csv", header=TRUE, VERBOSE=TRUE, 
-  #                    first.rows=1, next.rows=2, colClasses=NA)
-  # 
-  # con = DBI::dbConnect(odbc::odbc())
-  # chu = DBI::dbGetQuery(con, 'q -d \'|\' \'SELECT * FROM ~/Downloads/CCLE_RNAseq_transcripts.csv WHERE gene = \"PAX5\"')
-  
-  tic = Sys.time()
-  exp.dat = read.csv(rna_tx_path)
-  ela1 = Sys.time() - tic
-  
-  cel.dat = exp.dat$X
-  tic = Sys.time(); exp.dat = t(exp.dat)[-1,]; ela2 = Sys.time() - tic
-  gen.dat.original = rownames(exp.dat)
-  gen.dat = gsub('\\.\\..*$','',rownames(exp.dat))
   colnames(exp.dat) = as.character(gsub('\\_','\\.',apply(dep.dat.map[match(cel.dat, dep.dat.map$DepMap_ID),-1], 1, function(x) paste(x, collapse = '.'))))
   cel.dat = apply(as.matrix(colnames(exp.dat)), 1, function(x) {strsplit(x, split = '\\.')[[1]][1]})
   # fix the ACH code not mapping to cell lines: discard
