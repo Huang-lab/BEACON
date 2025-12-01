@@ -326,7 +326,7 @@ for (lineage in sort(unique(as.character(ccl.dep.nam$Tissue)))) {#***
                      .RNG.seed = 2))
             )
             
-            jag.mod = jags.model(textConnection(model_string), data = dat.lis, inits = ini.lis_with_seeds, n.adapt = n.adapt, n.chains = 2, quiet = T)
+            jag.mod = jags.model(textConnection(model_string), data = dat.lis, inits = ini.lis_with_seeds, n.adapt = n.adapt, n.chains = 3, quiet = T)
             update(jag.mod, n.update, progress.bar = 'none')
             mcm.sam = coda.samples(jag.mod, c('mu', 'rho', 'sigma', 'x_rand'), n.iter = n.iter)
             
