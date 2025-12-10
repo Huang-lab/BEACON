@@ -286,9 +286,13 @@ model_string = '
 
 res.all = c()
 genes.query = intersect(gen.dat, gen.dep); i = 0; L = length(genes.query) #**
-if (!is.null(continue.from)){ 
-  i = ceiling(seq(from = L/100, to = L, by = L/100))[continue.from]
-  genes.query = genes.query[-(1:i)]; 
+if (!is.null(continue.from)){
+  if (continue.from > 99 | continue.from < 0){
+    print('Warning: please set "continue.from" to an integer between 0 and 99.')
+  } else if (continue.from > 0){
+    i = ceiling(seq(from = L/100, to = L, by = L/100))[continue.from]
+    genes.query = genes.query[-(1:i)]; 
+  }
 }
 gene = 'SOX10'
 for (gene in genes.query) { #*** [1:100]
