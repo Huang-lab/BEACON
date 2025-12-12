@@ -104,7 +104,21 @@ intsect = function(foo, bar, map.to = 2) {
   ibar = ibar[s$ix]
   return(list(comm, ifoo, ibar))
 }
+# _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+# _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
 #
+#   regexprTab
+#
+#   a table of the presence of the regular expressions (row) in the data (col)
+#
+regexprTab = function(expressions = c('foo','bar'), data = c('food','barn')){
+  contains = data.frame(matrix(F, length(expressions), length(data)))
+  rownames(contains) = expressions; colnames(contains) = data
+  for (e in expressions){
+    contains[e,] = regexpr(e,data) > 0
+  }
+  return(contains)
+}
 # _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
 
 # _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
