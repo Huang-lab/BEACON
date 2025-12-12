@@ -29,7 +29,7 @@ Elmas A, Layden HM, Ellis JD, Bartlett LN, Zhao X, Kawabata-Iwakawa R, Obinata H
 3. Install JAGS:
    - JAGS can be downloaded and installed from [JAGS official site](https://sourceforge.net/projects/mcmc-jags/).
 
-4. Download required files and setup folders:
+4. Download required files and setup folders and file names (with proper suffixes due to data relase, e.g., "22Q2"):
 
    - sample_info.csv     @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=35020903
    - CCLE_expression.csv (further gzipped)     @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34989919
