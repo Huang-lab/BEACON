@@ -15,7 +15,7 @@ Elmas A, Layden HM, Ellis JD, Bartlett LN, Zhao X, Kawabata-Iwakawa R, Obinata H
 
 - **Flexible Data Input:** Supports multiple data types such as mRNA, Protein, and RNA transcripts.
 - **Customizable Parameters:** Users can adjust parameters like number of iterations, adaptation steps, and lineages of interest.
-- **Reproducibility:** The code can reproduce results or calculate false discovery rates (FDR) based on user inputs; Generates detailed output files with Bayesian analysis results for each lineage.
+- **Reproducibility:** The code can reproduce results or calculate false discovery rates (FDR) based on user inputs via setting random seeds  ("set.seed" and ".RNG.seed"); Generates detailed output files with Bayesian analysis results for each lineage.
 
 ## Installation
 
