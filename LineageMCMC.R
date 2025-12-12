@@ -112,6 +112,7 @@ intsect = function(foo, bar, map.to = 2) {
 #   a table of the presence of the regular expressions (row) in the data (col)
 #
 regexprTab = function(expressions = c('foo','bar'), data = c('food','barn')){
+  expressions = unique(expressions)
   contains = data.frame(matrix(F, length(expressions), length(data)))
   rownames(contains) = expressions; colnames(contains) = data
   for (e in expressions){
