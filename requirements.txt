@@ -1,3 +1,7 @@
-R version: 4.5.2 (2025-Nov)
-rjags: 4-10
-JAGS library: 4.3.0
+R version 4.2.0 (2022-04-22) or later
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] rjags_4-16       coda_0.19-4.1    openxlsx_4.2.7.1
