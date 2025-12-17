@@ -7,15 +7,11 @@
 #   - CRISPR dependency: DepMap_data/CRISPR_gene_effect_22Q2.csv.gz
 # Outputs:
 #   - One Excel per lineage: Table.<DATA>.dependency.Bayesian.lineage.<LINEAGE>.xlsx
-# Reproducibility:
-#   - Fixed R and JAGS seeds; posterior mean of rho is exported as column 'rho'
 # Download links:
 #   - sample_info.csv file     @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=35020903
 #   - CCLE_expression.csv file (further gzipped)     @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34989919
 #   - Supplementary data (Table S2: normalized protein expressions) from Nusinow et al. paper (doi.org/10.1016/j.cell.2019.12.023)     @ https://www.cell.com/cms/10.1016/j.cell.2019.12.023/attachment/3709dedc-3a01-4e1d-ab4c-82597295c5d2
 #   - CRISPR_gene_effect.csv file (further gzipped)     @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34990036
-# Expected runtime (8 vCPU/16 GB RAM; n.iter=500):
-#   - ~5–15 min per lineage (varies with n cell lines); full run ~2–4 hrs
 # ---------------------------------------------------------------------------------------
 # ml R jags/4.3.0
 # R
