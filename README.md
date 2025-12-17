@@ -52,10 +52,10 @@ Elmas A, Layden HM, Ellis JD, Bartlett LN, Zhao X, Kawabata-Iwakawa R, Obinata H
 
 ## Computational Requirements
 
-**Runtime:** Approximately 20 hours on a 16-core processor with 128 GB memory. Actual runtime may vary depending on system specifications and the number of genes analyzed. For subset analyses or testing, consider running on a limited set of genes initially.
+**Runtime:** Calculating panlineage mRNA correlations for 12619 genes takes approximately 50.7 hours (14.4 seconds per gene) on a 8-core processor with 32 GB memory (OS: x86_64-pc-linux-gnu, 64-bit), and it takes 9.3 hours per lineage (on average).
 
 **System Requirements:**
-- R version 4.4.3 or later
+- R version 4.2.0 (2022-04-22) or later
 - See `requirements.txt` for complete package versions and dependencies
 
 ## Usage
