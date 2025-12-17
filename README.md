@@ -81,9 +81,9 @@ To run the analysis, modify the R scriptS according to your data and parameters.
 
 ```R
 # Example of running the analysis
-n.adapt = 100
-n.update = 100
-n.iter = 500
+n.adapt = 200
+n.update = 200
+n.iter = 1000
 reproduce.results = TRUE
 
 # Load and prepare mRNA data
@@ -98,10 +98,12 @@ lineage='SOFT.TISSUE'
 
 # Run the analysis
 source('LineageMCMC.R')
+source('PanLineageMCMC.R')
 ```
 
 ## Output
 
 The analysis generates the following output files:
 - `Table.<data>.dependency.Bayesian.lineage.<lineage>.<panel>.xlsx`: Summary of Bayesian analysis for each lineage.
+- `Table.<data>.dependency.Bayesian.pancancer.<panel>.xlsx`: Summary of Bayesian panlineage analysis.
 - Log files and intermediate results saved in the specified output directory.
