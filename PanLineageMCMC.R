@@ -7,6 +7,7 @@
 #   - CRISPR dependency: DepMap_data/CRISPR_gene_effect_22Q2.csv.gz
 # Outputs:
 #   - Excel table with posterior summaries (per gene): Table.<DATA>.dependency.Bayesian.pancancer.xlsx
+#   - Log file, reporting the session info, including runtime, and the details of the computation environment and package versions used. 
 # Download links:
 #   - sample_info.csv file @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=35020903
 #   - CCLE_expression.csv file (further gzipped) @ https://figshare.com/articles/dataset/DepMap_22Q2_Public/19700056/2?file=34989919
